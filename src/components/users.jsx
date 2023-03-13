@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import api from "../api"
+import User from "./user";
+import Termination from "./searchStatus";
 
 const Users = () => {
     const [users, setUsers] = useState(api.users.fetchAll());
@@ -12,7 +14,7 @@ const Users = () => {
         n = Math.abs(n) % 100; var n1 = n % 10;
         if (n > 10 && n < 20) { return  Number(n) + ' человек тусанут с тобой сегодня'; }
         if (n1 > 1 && n1 < 5) {return Number(n) + " человека тусанет с тобой сегодня"; }
-        if (n1 == 1) { return Number(n) + " человек тусанет с тобой сегодня" }
+        if (n1 === 1) { return Number(n) + " человек тусанет с тобой сегодня" }
         return Number(n) + " человек тусанут с тобой сегодня";
     }
 
@@ -21,12 +23,20 @@ const Users = () => {
 
     };
 
+    const handleFavorite = (userId) =>{
+        const newListUsers = users.map((user)=>{
+            if (user._id === userId){user.bookmark = !user.bookmark}
+            return user
+        })
+        setUsers(newListUsers)
+    }
+
 
     return users.length > 0 ? (
         <>
         <h3>
             <span className={classesTermination()}>
-                {getTermination(users.length)}
+                {<Termination n = {users.length}/>}
             </span>
         </h3>
         <table className = "table table-striped table-bordered">
@@ -37,30 +47,20 @@ const Users = () => {
                 <th scope="col">Профессия</th>
                 <th scope="col">Встретился, раз</th>
                 <th scope="col">Оценка</th>
+                <th scope="col">Избранное</th>
                 <th scope="col">""</th>
             </tr>
             </thead>
             <tbody>
-                {users.map((user) => {
-                return (
-                        <tr key={user._id}>
-                            <td>{user.name}</td>
-                            <td>
-                                {user.qualities.map((item) => {
-                                    return (
-                                        <span key={item._id} className={"badge m-1 bg-" + item.color}>{item.name}</span>
-                                    )
-                                })}
-                            </td>
-                            <td>{user.profession.name}</td>
-                            <td>{user.completedMeetings}</td>
-                            <td>{user.rate}/5</td>
-                            <td>
-                                <button className="btn btn-danger" onClick={() => handleDelete(user._id)}>Delete</button>
-                            </td>
-                        </tr>
-                    )
-                })}
+                {users.map((user) => (
+                    <User
+                    key = {user._id}
+                    {...user}
+                    onFavorite = {handleFavorite}
+                    onDelete = {handleDelete}
+                    />
+                
+                ))}
 
             </tbody>
     </table>
@@ -68,7 +68,7 @@ const Users = () => {
     ) :
     (<h3>
         <span className={classesTermination()}>
-            Нкто с тобой не тусанет
+            Никто с тобой не тусанет
         </span>
     </h3>)
 };
