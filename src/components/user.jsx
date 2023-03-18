@@ -6,7 +6,7 @@ import propTypes from 'prop-types'
 const User = ({ name, ...props }) => {
   return (
     <tr>
-      <td>{props.name}</td>
+      <td>{name}</td>
       <td>
         {props.qualities.map((item) => (<Qualitie key={item._id } {...item}/>
         ))}
@@ -29,10 +29,10 @@ User.propTypes = {
   onDelete: propTypes.func,
   onFavorite: propTypes.func,
   _id: propTypes.string,
-  profession: propTypes.string,
+  profession: propTypes.object,
   completedMeetings: propTypes.number,
   rate: propTypes.number,
-  qualities: propTypes.string
+  qualities: propTypes.array
 }
 
 export default User

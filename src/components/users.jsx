@@ -1,17 +1,22 @@
-import React, { useState } from 'react'
-import api from '../api'
+import React, { useState, useEffect } from 'react'
+import api from '../api/fake.api'
 import User from './user'
 import Termination from './searchStatus'
 import Pagination from './pagination'
 import { paginate } from '../utils/paginate'
+import Grouplist from './groupList'
 
 const Users = () => {
   const [users, setUsers] = useState(api.users.fetchAll())
   const count = users.length
   const pageSize = 4
   const [currentPage, setCurrentPage] = useState(1)
+  const [selectedProf, setSelectedProf] = useState()
+  const [professions, setProfession] = useState()
 
-  const userCrop = paginate(users, currentPage, pageSize)
+  useEffect(() => {
+    api.professions.fetchAll().then((data) => setProfession(data))
+  }, [])
 
   const handleDelete = (userID) => {
     setUsers(prevState => prevState.filter(item => item._id !== userID))
@@ -32,9 +37,26 @@ const Users = () => {
   const handlePageChenge = (pageIndex) =>
     setCurrentPage(pageIndex)
 
+  const handleProfessionSelect = item => {
+    setSelectedProf(item)
+  }
+
+  const filterUsers = selectedProf
+    ? users.filter((user) => user.profession === selectedProf)
+    : users
+
+  const userCrop = paginate(filterUsers, currentPage, pageSize)
+
   return count > 0
     ? (
     <>
+      {professions && (
+        <Grouplist
+        items = {professions}
+        selectedItem = {selectedProf}
+        onItemSelect = {handleProfessionSelect}
+      />
+      )}
       <h3>
         <span className={classesTermination()}>
           {<Termination n = {count}/>}
