@@ -8,7 +8,6 @@ const Grouplist = ({
   onItemSelect,
   selectedItem
 }) => {
-  console.log(items)
   const newItemslist = !Array.isArray(items)
     ? Object.keys(items)
     : items
