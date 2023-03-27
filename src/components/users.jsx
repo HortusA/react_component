@@ -8,7 +8,7 @@ import Grouplist from './groupList'
 
 const Users = () => {
   const [users, setUsers] = useState(api.users.fetchAll())
-  const count = users.length
+
   const pageSize = 4
   const [currentPage, setCurrentPage] = useState(1)
   const [selectedProf, setSelectedProf] = useState()
@@ -41,28 +41,42 @@ const Users = () => {
     setSelectedProf(item)
   }
 
+  const clearFilter = () => {
+    setSelectedProf()
+  }
+
   const filterUsers = selectedProf
     ? users.filter((user) => user.profession === selectedProf)
     : users
-
+  const count = filterUsers.length
   const userCrop = paginate(filterUsers, currentPage, pageSize)
 
   return count > 0
     ? (
-    <>
+      <div className='d-flex'>
+    <div>
       {professions && (
+        <div className='d-flex'>
         <Grouplist
         items = {professions}
         selectedItem = {selectedProf}
         onItemSelect = {handleProfessionSelect}
       />
+
+      </div>
       )}
+<button className='btn btn-secondary mt-2' onClick={clearFilter} >Очистить</button>
+
+      </div>
+
+      <div>
       <h3>
-        <span className={classesTermination()}>
+        <div className={classesTermination()}>
           {<Termination n = {count}/>}
-        </span>
+        </div>
       </h3>
       <table className = "table table-striped table-bordered">
+
         <thead>
           <tr>
             <th scope="col">Имя</th>
@@ -85,13 +99,16 @@ const Users = () => {
           ))}
 
         </tbody>
-      </table>
-      <Pagination
+
+        <Pagination
         itemsCount = {count}
         pageSize = {pageSize}
         currentPage = {currentPage}
         onPageCheng = {handlePageChenge}/>
-    </>
+      </table>
+      </div>
+
+    </div>
       )
     : (
       <h3>
